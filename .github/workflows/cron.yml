@@ -1,0 +1,31 @@
+name: NOAA 3-Day Forecast Saver
+
+on:
+  # Runs every day at 00:30 UTC (≈ 06:00 IST)
+  schedule:
+    - cron: "30 0 * * *"
+  # Allow manual runs
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run saver script
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          DB_NAME: space_forecasts
+          COLL_NAME: noaa_3day_snapshots
+        run: python save_noaa_3day.py

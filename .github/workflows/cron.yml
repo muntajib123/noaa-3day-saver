@@ -1,10 +1,10 @@
-name: NOAA 3-Day Forecast Saver
+name: NOAA Forecast Saver
 
 on:
   # Runs every day at 00:30 UTC (≈ 06:00 IST)
   schedule:
     - cron: "30 0 * * *"
-  # Allow manual runs
+  # Allow manual runs from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -23,9 +23,17 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run saver script
+      - name: Run 3-day saver
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           DB_NAME: space_forecasts
           COLL_NAME: noaa_3day_snapshots
         run: python save_noaa_3day.py
+
+      - name: Run 27-day saver
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          DB_NAME: space_forecasts
+          COLL_27DAY: noaa_27day_snapshots
+        run: python save_noaa_27day.py
+
